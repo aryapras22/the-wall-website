@@ -29,4 +29,26 @@ class AuthController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Your account has been created successfully!');
     }
+
+    public function login()
+    {
+        return view('auth.login');
+    }
+
+    public function authenticate()
+    {
+        $credentials = request()->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if (auth()->attempt($credentials)) {
+            request()->session()->regenerate();
+            return redirect()->route('dashboard')->with('success', 'Logged in Successfully!');
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
+    }
 }
